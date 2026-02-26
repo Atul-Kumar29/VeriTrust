@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# VeriTrust
 
-## Getting Started
+## Overview
+VeriTrust is a hackathon prototype that demonstrates a new way to verify the authenticity of digital videos. The project focuses on showing how AI analysis and blockchain concepts can be combined to create a transparent trust layer for video content. Instead of labeling videos as simply real or fake, VeriTrust introduces the idea of a verifiable video identity that evolves when the video is edited or modified.
 
-First, run the development server:
+This submission is a front end simulation built to clearly communicate the concept to evaluators in a limited time setting.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Problem Statement
+Advances in AI based video generation and editing tools have made it difficult to trust video content shared online. Fake or manipulated videos can spread misinformation, harm public safety, and reduce confidence in journalism, social media, and legal evidence. Existing solutions are often centralized, rely on editable metadata, or provide opaque results without verifiable proof or history tracking.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Proposed Solution
+VeriTrust assigns every uploaded video a unique digital identity derived from its visual content. This identity represents the video in a tamper resistant way and is anchored to a simulated blockchain record for immutability and public verification. When a video is edited, the system generates a composite identity that links the original video with its modifications, allowing the video’s lineage to be traced rather than overwritten.
 
-## Learn More
+An AI based analysis step estimates whether the video is likely authentic camera footage, edited content, or AI generated media. The final output is a trust score and verification report that communicates credibility and transformation history instead of a binary real or fake decision.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Innovation
+- Video identity generation based on content rather than filenames or metadata  
+- Composite identity that reflects how a video evolves after edits  
+- Trust score based evaluation instead of binary classification  
+- Combination of AI analysis and blockchain backed verification in a single workflow  
+- Focus on transparency, traceability, and public trust  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Demo Scope
+This hackathon submission is intentionally limited to a front end demonstration.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The demo simulates:
+- Video upload and analysis flow  
+- Digital fingerprint generation  
+- Blockchain anchoring and verification records  
+- AI based authenticity classification  
+- Trust score calculation and identity evolution timeline  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No real AI models or blockchain networks are used. All results are generated using mock logic to illustrate the concept clearly.
+
+---
+
+## Technology Stack
+- Next.js with App Router  
+- JavaScript  
+- Tailwind CSS  
+- Client side only implementation for now as a demo 
+
+---
+
+## Intended Use Cases
+- Journalism and news verification  
+- Social media content moderation  
+- Public safety and misinformation control  
+- Legal and evidentiary media validation  
+- Platform independent video trust assessment  
+
+---
+
+## Limitations
+This prototype does not claim perfect or universal detection of video manipulation. It is designed to demonstrate a realistic and scalable approach to video authenticity verification, emphasizing accountability and traceability rather than absolute guarantees.
+
+---
+
+## Conclusion
+VeriTrust presents a practical and innovative approach to restoring trust in digital video content. By treating video authenticity as a measurable and verifiable property rather than an assumption, the system highlights how future platforms can make media manipulation visible, accountable, and harder to hide. This demo serves as a proof of concept for a larger trust framework that can evolve with advancements in AI and digital media.
