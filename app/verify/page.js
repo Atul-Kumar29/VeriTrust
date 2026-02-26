@@ -13,7 +13,8 @@ import {
     Fingerprint,
     Link as LinkIcon,
     Cpu,
-    ArrowRight
+    ArrowRight,
+    Activity
 } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
