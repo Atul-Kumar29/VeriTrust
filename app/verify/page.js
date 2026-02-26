@@ -34,7 +34,7 @@ const generateMockResults = () => {
     let compositeId;
     let message;
 
-    const generateHex = (len) => [...Array(len)].map(() => Math.floor(Math.random() * 16).toString(16)).toUpperCase();
+    const generateHex = (len) => [...Array(len)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
 
     const mockCaptureId = `CID-${generateHex(4)}-${generateHex(4)}`;
     const mockEditId = `EID-${generateHex(8)}`;
