@@ -1,68 +1,66 @@
 # VeriTrust
 
 ## Overview
-VeriTrust is a hackathon prototype that demonstrates a new way to verify the authenticity of digital videos. The project focuses on showing how AI analysis and blockchain concepts can be combined to create a transparent trust layer for video content. Instead of labeling videos as simply real or fake, VeriTrust introduces the idea of a verifiable video identity that evolves when the video is edited or modified.
+VeriTrust is a hackathon prototype demonstrating a **capture-time authenticity framework** for digital video verification. The project revolves around the idea that for a video to be trusted, its authenticity must start at the moment of capture. 
 
-This submission is a front end simulation built to clearly communicate the concept to evaluators in a limited time setting.
+Original videos are "born" with a hardware-generated identity created by trusted camera hardware (like phones, DSLRs, or CCTV). This Capture ID anchors the original visual data. When a video is edited, instead of losing authenticity, the system traces the edits and appends "Edit IDs", culminating in a Final Composite Trust ID.
+
+This submission is a client-side front-end simulation built to clearly communicate the concept to evaluators in a limited time setting.
 
 ---
 
 ## Problem Statement
-Advances in AI based video generation and editing tools have made it difficult to trust video content shared online. Fake or manipulated videos can spread misinformation, harm public safety, and reduce confidence in journalism, social media, and legal evidence. Existing solutions are often centralized, rely on editable metadata, or provide opaque results without verifiable proof or history tracking.
+Advances in AI-based video generation and editing tools have made it exceedingly difficult to trust video content shared online. Fake or manipulated videos can spread misinformation, harm public safety, and reduce confidence in journalism, social media, and legal evidence. Existing solutions are often centralized, rely on easily editable metadata, or provide opaque results without verifiable proof or history tracking.
 
 ---
 
 ## Proposed Solution
-VeriTrust assigns every uploaded video a unique digital identity derived from its visual content. This identity represents the video in a tamper resistant way and is anchored to a simulated blockchain record for immutability and public verification. When a video is edited, the system generates a composite identity that links the original video with its modifications, allowing the video’s lineage to be traced rather than overwritten.
+VeriTrust operates on the principle of **Capture-Time Authenticity**:
+1. **Capture ID (Original Hardware ID):** Authentic videos receive a mandatory cryptographic Capture ID at the time of recording inside the camera hardware.
+2. **Edit ID:** When modified, editing software adds Edit IDs that identify what was changed without overwriting the original lineage.
+3. **Composite Trust ID:** A combined identity linking the original Capture ID + one or more Edit IDs.
 
-An AI based analysis step estimates whether the video is likely authentic camera footage, edited content, or AI generated media. The final output is a trust score and verification report that communicates credibility and transformation history instead of a binary real or fake decision.
+An AI-based analysis step estimates the trust score. If a video lacks a Capture ID completely, it is flagged as synthetic or untrusted by default. The final output is a trust score and verification report that communicates chronological credibility rather than a standard binary real-or-fake decision.
 
 ---
 
 ## Key Innovation
-- Video identity generation based on content rather than filenames or metadata  
-- Composite identity that reflects how a video evolves after edits  
-- Trust score based evaluation instead of binary classification  
-- Combination of AI analysis and blockchain backed verification in a single workflow  
-- Focus on transparency, traceability, and public trust  
+- **Capture-First Focus:** Authenticity starts at video capture, not upload.
+- **Embracing Edits:** Edits are allowed but made visible and traceable via connected Edit IDs.
+- **Evolutionary Identity:** Composite identities trace how a video evolves, restoring nuance to the verification process.
+- **Blockchain + AI Synchronization:** Combining simulated immutable origin history (blockchain) with synthetic content detection (AI).
 
 ---
 
 ## Demo Scope
-This hackathon submission is intentionally limited to a front end demonstration.
+This hackathon submission is intentionally limited to a front-end demonstration of the concept.
 
 The demo simulates:
-- Video upload and analysis flow  
-- Digital fingerprint generation  
-- Blockchain anchoring and verification records  
-- AI based authenticity classification  
-- Trust score calculation and identity evolution timeline  
+- Validating the presence of hardware Capture IDs.
+- Generating and tracing Edit IDs to build a Composite Trust Score.
+- Blockchain anchoring visualizations and network verifications.
+- Timeline generation showing how trust changes as edits are introduced.
 
-No real AI models or blockchain networks are used. All results are generated using mock logic to illustrate the concept clearly.
+**Note:** No real hardware, blockchain, or AI models are used in this prototype. All results are generated using deterministic/mocked logic to illustrate the UX and the concept clearly for evaluators.
 
 ---
 
 ## Technology Stack
-- Next.js with App Router  
+- Next.js 15 (App Router)  
 - JavaScript  
-- Tailwind CSS  
-- Client side only implementation for now as a demo 
+- Tailwind CSS
+- Framer Motion & Lucide Icons
+- Client-side only implementation
 
 ---
 
 ## Intended Use Cases
-- Journalism and news verification  
+- Journalism and news verification (tracing field footage to broadcast edits)
 - Social media content moderation  
 - Public safety and misinformation control  
 - Legal and evidentiary media validation  
-- Platform independent video trust assessment  
-
----
-
-## Limitations
-This prototype does not claim perfect or universal detection of video manipulation. It is designed to demonstrate a realistic and scalable approach to video authenticity verification, emphasizing accountability and traceability rather than absolute guarantees.
 
 ---
 
 ## Conclusion
-VeriTrust presents a practical and innovative approach to restoring trust in digital video content. By treating video authenticity as a measurable and verifiable property rather than an assumption, the system highlights how future platforms can make media manipulation visible, accountable, and harder to hide. This demo serves as a proof of concept for a larger trust framework that can evolve with advancements in AI and digital media.
+VeriTrust presents a practical and innovative approach to restoring trust in digital video content by treating authenticity as an evolutionary scale tied to hardware origins. This framework highlights how media manipulation can be made transparent and accountable, serving as a powerful proof of concept for future hardware-to-platform trust layers.

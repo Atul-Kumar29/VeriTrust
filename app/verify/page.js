@@ -19,39 +19,66 @@ import {
 import Link from "next/link";
 import clsx from "clsx";
 
-// Mock Data Generator
+// Mock Data Generator for Capture-Time Concept
 const generateMockResults = () => {
-    const isAuthentic = Math.random() > 0.5;
-    const isEdited = !isAuthentic && Math.random() > 0.5;
+    const rand = Math.random();
+    const isAuthentic = rand < 0.33;
+    const isEdited = rand >= 0.33 && rand < 0.66;
+    const isUntrusted = rand >= 0.66;
 
     let score;
     let classification;
     let editDetection;
+    let captureId;
+    let editId;
+    let compositeId;
+    let message;
+
+    const generateHex = (len) => [...Array(len)].map(() => Math.floor(Math.random() * 16).toString(16)).toUpperCase();
+
+    const mockCaptureId = `CID-${generateHex(4)}-${generateHex(4)}`;
+    const mockEditId = `EID-${generateHex(8)}`;
+    const mockCompositeId = `TR-${generateHex(8)}-COMP`;
 
     if (isAuthentic) {
-        score = Math.floor(Math.random() * 15) + 85; // 85-99
+        score = Math.floor(Math.random() * 10) + 90; // 90-100
         classification = "Authentic Camera Footage";
         editDetection = "None";
+        message = "Valid capture-time authenticity ID detected.";
+        captureId = mockCaptureId;
+        editId = "N/A (No edits)";
+        compositeId = captureId;
     } else if (isEdited) {
-        score = Math.floor(Math.random() * 30) + 40; // 40-70
-        classification = "Edited Video";
-        editDetection = "Minor / Structural";
+        score = Math.floor(Math.random() * 20) + 60; // 60-80
+        classification = "Edited Original Video";
+        editDetection = "Edits Traceable";
+        message = "Original capture ID detected, edits identified.";
+        captureId = mockCaptureId;
+        editId = mockEditId;
+        compositeId = mockCompositeId;
     } else {
+        // Untrusted / AI
         score = Math.floor(Math.random() * 30) + 5; // 5-35
-        classification = "AI-Generated";
-        editDetection = "Significant / Deepfake";
+        classification = "Untrusted / Synthetic Media";
+        editDetection = "Origin Unknown";
+        message = "No valid capture ID found, content likely synthetic or untrusted.";
+        captureId = "MISSING_ID";
+        editId = "N/A";
+        compositeId = "UNVERIFIED";
     }
-
-    const generateHex = (len) => [...Array(len)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
 
     return {
         id: `VT-${generateHex(6)}`,
         score,
         classification,
         editDetection,
-        originalId: `0x${generateHex(12)}...`,
-        modificationId: isAuthentic ? "N/A" : `0x${generateHex(12)}...`,
-        compositeId: `TR-${generateHex(8)}-COMP`,
+        message,
+        captureId,
+        editId,
+        compositeId,
+        isAuthentic,
+        isEdited,
+        isUntrusted,
         blockchain: {
             timestamp: new Date().toISOString(),
             hash: `0x${generateHex(64).toLowerCase()}`,
@@ -83,7 +110,6 @@ export default function VerifyPage() {
     };
 
     const handleFile = (uploadedFile) => {
-        // Basic validation
         if (uploadedFile.type.includes("video/")) {
             setFile(uploadedFile);
             startAnalysis();
@@ -99,9 +125,9 @@ export default function VerifyPage() {
 
         // Simulated Processing Pipeline
         const steps = [
-            { delay: 1500, step: 1 }, // 1. Fingerprint Generation
-            { delay: 3500, step: 2 }, // 2. Blockchain Anchoring
-            { delay: 6000, step: 3 }, // 3. AI Authenticity Analysis
+            { delay: 1500, step: 1 }, // 1. Scan for Hardware Capture ID
+            { delay: 3500, step: 2 }, // 2. Verify blockchain origin record
+            { delay: 6000, step: 3 }, // 3. Trace Edit IDs (if any)
             { delay: 8500, step: 4 }  // Done
         ];
 
@@ -128,7 +154,6 @@ export default function VerifyPage() {
 
     return (
         <div className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30 font-sans pb-20">
-            {/* Navbar Minimal */}
             <nav className="flex items-center justify-between px-6 py-4 md:px-12 border-b border-white/5 bg-neutral-950 top-0 sticky z-50">
                 <Link href="/" className="flex items-center gap-3 group">
                     <div className="p-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-colors">
@@ -153,7 +178,7 @@ export default function VerifyPage() {
                         >
                             <div className="text-center mb-10">
                                 <h1 className="text-4xl font-extrabold mb-4">Verify a Video</h1>
-                                <p className="text-neutral-400">Upload a video file to run it through the VeriTrust engine.</p>
+                                <p className="text-neutral-400">Upload a video to check for a valid Capture ID and trace its edit history.</p>
                             </div>
 
                             <div
@@ -203,14 +228,14 @@ export default function VerifyPage() {
                                 </div>
 
                                 <h2 className="text-3xl font-bold mb-3">Analyzing "{file?.name}"</h2>
-                                <p className="text-neutral-400 mb-12">Please wait while we verify cryptographic signatures and run AI analysis.</p>
+                                <p className="text-neutral-400 mb-12">Checking for secure hardware embedded Capture ID...</p>
 
                                 <div className="w-full space-y-5">
                                     {[
-                                        { title: "Extracting metadata & frames...", icon: FileVideo },
-                                        { title: "Generating cryptographic fingerprint...", icon: Fingerprint },
-                                        { title: "Anchoring to blockchain...", icon: LinkIcon },
-                                        { title: "Running AI authenticity analysis...", icon: Cpu }
+                                        { title: "Scanning for Hardware Capture ID...", icon: Cpu },
+                                        { title: "Verifying blockchain origin record...", icon: LinkIcon },
+                                        { title: "Tracing Edit IDs and modifications...", icon: Activity },
+                                        { title: "Calculating final Composite Trust Score...", icon: Fingerprint }
                                     ].map((step, idx) => {
                                         const isActive = analysisStep === idx;
                                         const isDone = analysisStep > idx;
@@ -261,14 +286,27 @@ export default function VerifyPage() {
                                 </button>
                             </div>
 
+                            {/* Status Banner */}
+                            <div className={clsx(
+                                "mb-6 p-4 rounded-xl border flex items-center gap-3",
+                                results.isAuthentic ? "bg-green-500/10 border-green-500/20 text-green-400" :
+                                    results.isEdited ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-400" :
+                                        "bg-red-500/10 border-red-500/20 text-red-400"
+                            )}>
+                                {results.isAuthentic ? <ShieldCheck className="w-6 h-6" /> :
+                                    results.isEdited ? <AlertTriangle className="w-6 h-6" /> :
+                                        <ShieldAlert className="w-6 h-6" />}
+                                <span className="font-medium">{results.message}</span>
+                            </div>
+
                             {/* Main Result Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
                                 {/* Score Card */}
                                 <div className="col-span-1 md:col-span-1 p-6 bg-neutral-900 border border-white/10 rounded-3xl flex flex-col justify-between">
                                     <div>
-                                        <div className="text-sm font-medium text-neutral-400 mb-1">Authenticity Score</div>
-                                        <div className="text-neutral-500 text-xs mb-6">Video ID: {results.id}</div>
+                                        <div className="text-sm font-medium text-neutral-400 mb-1">Composite Trust Score</div>
+                                        <div className="text-neutral-500 text-xs mb-6">Report ID: {results.id}</div>
                                     </div>
                                     <div className="flex items-end gap-2">
                                         <div className={clsx(
@@ -294,46 +332,39 @@ export default function VerifyPage() {
                                 {/* Details Card */}
                                 <div className="col-span-1 md:col-span-2 p-6 bg-neutral-900 border border-white/10 rounded-3xl grid grid-cols-1 sm:grid-cols-2 gap-8">
                                     <div>
-                                        <h3 className="text-sm font-medium text-neutral-400 mb-2">Source Classification</h3>
-                                        <div className="flex items-center gap-3">
-                                            {results.score >= 85 ? (
-                                                <ShieldCheck className="w-8 h-8 text-green-500" />
-                                            ) : results.score >= 40 ? (
-                                                <AlertTriangle className="w-8 h-8 text-yellow-500" />
-                                            ) : (
-                                                <ShieldAlert className="w-8 h-8 text-red-500" />
-                                            )}
-
-                                            <div className={clsx(
-                                                "text-xl font-bold",
-                                                results.score >= 85 ? "text-green-400" : results.score >= 40 ? "text-yellow-400" : "text-red-400"
-                                            )}>
-                                                {results.classification}
-                                            </div>
+                                        <h3 className="text-sm font-medium text-neutral-400 mb-2">Provenance Classification</h3>
+                                        <div className="flex items-center gap-3 mt-1 text-xl font-bold text-white">
+                                            {results.classification}
                                         </div>
                                     </div>
 
                                     <div>
-                                        <h3 className="text-sm font-medium text-neutral-400 mb-2">Edit Detection Level</h3>
+                                        <h3 className="text-sm font-medium text-neutral-400 mb-2">Edit Detection</h3>
                                         <div className="text-xl font-semibold text-white mt-1">
                                             {results.editDetection}
                                         </div>
                                     </div>
 
                                     <div className="sm:col-span-2 pt-6 border-t border-white/5">
-                                        <h3 className="text-sm font-medium text-neutral-400 mb-4">Composite Identity</h3>
+                                        <h3 className="text-sm font-medium text-neutral-400 mb-4">Evolutionary Identity</h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                             <div className="p-3 bg-neutral-950 rounded-xl border border-white/5">
-                                                <div className="text-xs text-neutral-500 mb-1">Original Content ID</div>
-                                                <div className="font-mono text-xs text-neutral-300 truncate">{results.originalId}</div>
+                                                <div className="text-xs text-neutral-500 mb-1">Capture ID <span className="text-[10px] text-neutral-600">(Hardware)</span></div>
+                                                <div className={clsx(
+                                                    "font-mono text-xs truncate",
+                                                    results.isUntrusted ? "text-red-400" : "text-neutral-300"
+                                                )}>{results.captureId}</div>
                                             </div>
                                             <div className="p-3 bg-neutral-950 rounded-xl border border-white/5">
-                                                <div className="text-xs text-neutral-500 mb-1">Modification ID</div>
-                                                <div className="font-mono text-xs text-neutral-300 truncate">{results.modificationId}</div>
+                                                <div className="text-xs text-neutral-500 mb-1">Edit ID(s)</div>
+                                                <div className="font-mono text-xs text-neutral-300 truncate">{results.editId}</div>
                                             </div>
                                             <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                                                <div className="text-xs text-indigo-400 mb-1">Final Trust ID</div>
-                                                <div className="font-mono text-xs text-indigo-200 truncate">{results.compositeId}</div>
+                                                <div className="text-xs text-indigo-400 mb-1">Final Composite Trust ID</div>
+                                                <div className={clsx(
+                                                    "font-mono text-xs truncate",
+                                                    results.isUntrusted ? "text-red-400" : "text-indigo-200"
+                                                )}>{results.compositeId}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -351,30 +382,41 @@ export default function VerifyPage() {
                                     </h3>
 
                                     <div className="relative border-l border-neutral-700 ml-3 pl-6 space-y-8">
-                                        <div className="relative">
-                                            <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-[30.5px] top-1.5 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                                            <h4 className="font-semibold text-white">Original Upload</h4>
-                                            <p className="text-sm text-neutral-400 mt-1">Source verified by camera hardware signature.</p>
-                                            <div className="text-xs font-mono text-neutral-500 mt-2">Score: 99%</div>
-                                        </div>
 
-                                        {results.score < 85 && (
+                                        {results.isUntrusted ? (
                                             <div className="relative">
-                                                <div className="absolute w-3 h-3 bg-yellow-500 rounded-full -left-[30.5px] top-1.5 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
-                                                <h4 className="font-semibold text-white">First Edit Detected</h4>
-                                                <p className="text-sm text-neutral-400 mt-1">Video metadata altered and encoding changed.</p>
-                                                <div className="text-xs font-mono text-neutral-500 mt-2">Score dropped to 65%</div>
+                                                <div className="absolute w-3 h-3 bg-red-500 rounded-full -left-[30.5px] top-1.5 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
+                                                <h4 className="font-semibold text-white">Missing Capture ID</h4>
+                                                <p className="text-sm text-neutral-400 mt-1">No hardware embedded generation ID detected. Content cannot be verified as authentic recording.</p>
                                             </div>
+                                        ) : (
+                                            <>
+                                                <div className="relative">
+                                                    <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-[30.5px] top-1.5 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                                                    <h4 className="font-semibold text-white">Capture Event</h4>
+                                                    <p className="text-sm text-neutral-400 mt-1">Hardware Capture ID generated. Original source verified.</p>
+                                                    <div className="text-xs font-mono text-neutral-500 mt-2">Score: 100%</div>
+                                                </div>
+
+                                                {results.isEdited && (
+                                                    <div className="relative">
+                                                        <div className="absolute w-3 h-3 bg-yellow-500 rounded-full -left-[30.5px] top-1.5 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
+                                                        <h4 className="font-semibold text-white">Edit Event Detected</h4>
+                                                        <p className="text-sm text-neutral-400 mt-1">Modifications applied. Edit ID appended to trace lineage securely.</p>
+                                                        <div className="text-xs font-mono text-neutral-500 mt-2">Score Adjusted</div>
+                                                    </div>
+                                                )}
+                                            </>
                                         )}
 
                                         <div className="relative">
                                             <div className={clsx(
                                                 "absolute w-3 h-3 rounded-full -left-[30.5px] top-1.5 shadow-[0_0_10px_rgba(255,255,255,0.2)]",
-                                                results.score >= 85 ? "bg-green-500 text-green-500 shadow-green-500/50" : results.score >= 40 ? "bg-yellow-500 shadow-yellow-500/50" : "bg-red-500 shadow-red-500/50"
+                                                results.isAuthentic ? "bg-green-500 text-green-500 shadow-green-500/50" : results.isEdited ? "bg-yellow-500 shadow-yellow-500/50" : "bg-red-500 shadow-red-500/50"
                                             )}></div>
-                                            <h4 className="font-semibold text-white">Current Verification</h4>
-                                            <p className="text-sm text-neutral-400 mt-1">AI analysis composite verification completed.</p>
-                                            <div className="text-xs font-mono text-neutral-500 mt-2 text-indigo-400">Final Score: {results.score}%</div>
+                                            <h4 className="font-semibold text-white">Final Verification</h4>
+                                            <p className="text-sm text-neutral-400 mt-1">Composite trust profile evaluated.</p>
+                                            <div className="text-xs font-mono text-neutral-500 mt-2 text-indigo-400">Final Trust Score: {results.score}%</div>
                                         </div>
                                     </div>
                                 </div>
